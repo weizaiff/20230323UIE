@@ -105,7 +105,7 @@ class ConstraintSeq2SeqTrainer(Seq2SeqTrainer):
             **kwargs
         )
 
-    def _maybe_log_save_evaluate(self, tr_loss, model, trial, epoch):
+    def _maybe_log_save_evaluate(self, tr_loss, model, trial, epoch, _maybe_log_save_evaluate):
         if self.control.should_log:
             logs: Dict[str, float] = {}
             tr_loss_scalar = tr_loss.item()
@@ -200,7 +200,7 @@ class ConstraintSeq2SeqTrainer(Seq2SeqTrainer):
             generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_length"])
 
         with torch.no_grad():
-            if self.use_amp:
+            if False and self.use_amp:
                 with autocast():
                     outputs = model(**inputs)
             else:

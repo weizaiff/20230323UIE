@@ -62,12 +62,14 @@ def main():
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
+    # 不同类型的参数
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, ConstraintSeq2SeqTrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
         model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
+        #使用文件中的参数或者外部制定--相当于原生的parser
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     # Detecting last checkpoint.
@@ -138,6 +140,7 @@ def main():
             data_files["test"] = data_args.test_file
             extension = data_args.test_file.split(".")[-1]
     logger.info(data_files)
+    # TODO 根据已有的脚本read 数据
     datasets = load_dataset("uie_json.py", data_files=data_files)
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.

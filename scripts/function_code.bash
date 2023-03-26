@@ -22,6 +22,8 @@ export map_config=config/offset_map/closest_offset_en.yaml
 
 OPTS=$(getopt -o b:d:m:i:t:k:s:l:f:n:v --long batch:,device:,model:,data:,task:,run-time:,seed:,lr:,lr_scheduler:,label_smoothing:,epoch:,format:,eval_steps:,warmup_ratio:,constraint_decoding,verbose,preprocess,fp16:,negative:,random_prompt,max_source_length:,max_target_length:,spot_noise:,asoc_noise:,positive:,map_config:, -n 'parse-options' -- "$@")
 
+
+# $? 得到上一个命令的输出结果或者输出状态，0 表示正常
 if [ $? != 0 ]; then
   echo "Failed parsing options." >&2
   exit 1
