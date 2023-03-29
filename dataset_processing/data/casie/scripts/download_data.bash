@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- coding:utf-8 -*-
 
-git clone git@github.com:Ebiquity/CASIE.git || exit 1
+git clone https://github.com/Ebiquity/CASIE.git || exit 1
 
 cp -r CASIE/data raw_data
 

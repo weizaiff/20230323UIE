@@ -57,6 +57,8 @@ class Json(datasets.ArrowBasedBuilder):
         for split_name, files in data_files.items():
             if isinstance(files, str):
                 files = [files]
+            # https://huggingface.co/docs/datasets/main/en/dataset_script
+            # 设置不同split的数据name以及相应的path,如 train, eval, test
             splits.append(datasets.SplitGenerator(name=split_name, gen_kwargs={"files": files}))
         return splits
 
@@ -80,10 +82,13 @@ class Json(datasets.ArrowBasedBuilder):
                     pa_table = pa.Table.from_pydict(mapping=dataset)
             else:
                 try:
+                    '''
+                        实际运行的代码
+                    '''
                     pa_table = paj.read_json(
                         file,
                         read_options=self.config.pa_read_options,
-                        parse_options=self.config.pa_parse_options,
+                        parse_options=self.config.pa_parse_options,# https://arrow.apache.org/docs/python/generated/pyarrow.json.ParseOptions.html#pyarrow.json.ParseOptions
                     )
                 except pa.ArrowInvalid:
                     with open(file, encoding="utf-8") as f:

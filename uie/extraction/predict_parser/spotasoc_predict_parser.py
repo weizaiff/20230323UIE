@@ -29,6 +29,9 @@ split_bracket = re.compile(r"<extra_id_\d>")
 def add_space(text):
     """
     add space between special token
+
+
+
     """
     new_text_list = list()
     for item in zip(split_bracket.findall(text), split_bracket.split(text)[1:]):
@@ -37,6 +40,18 @@ def add_space(text):
 
 
 def convert_bracket(text):
+    '''
+
+    org_text: "<extra_id_0> <extra_id_0> location <extra_id_5> JAPAN <extra_id_1> <extra_id_0> person <extra_id_5> CHINA <extra_id_1> <extra_id_1>"
+
+    add_space_text: <extra_id_0>   <extra_id_0>  location  <extra_id_5>  JAPAN  <extra_id_1>   <extra_id_0>  person  <extra_id_5>  CHINA  <extra_id_1>   <extra_id_1> "
+
+    return_text: '【   【  location  <extra_id_5>  JAPAN  】   【  person  <extra_id_5>  CHINA  】   】 "\n'
+
+
+    :param text:
+    :return:
+    '''
     text = add_space(text)
     for start in [type_start]:
         text = text.replace(start, left_bracket)
@@ -64,7 +79,7 @@ def check_well_form(tree_str):
     return find_bracket_num(tree_str) == 0
 
 
-def clean_text(tree_str):
+def clean_text(tree_str):# 靠左右括号判定其是否是正常格式的输出
     count = 0
     sum_count = 0
 
@@ -139,6 +154,10 @@ class SpotAsocPredictParser(PredictParser):
                ) -> Tuple[List[Dict], Counter]:
         """
 
+
+
+
+
         :param gold_list:
         :param pred_list:
         :param text_list:
@@ -168,9 +187,10 @@ class SpotAsocPredictParser(PredictParser):
 
         if raw_list is None:
             raw_list = [None] * len(pred_list)
-
+        # batch中每个句子遍历
         for gold, pred, text, raw_data in zip(gold_list, pred_list, text_list,
                                               raw_list):
+
             gold = convert_bracket(gold)
             pred = convert_bracket(pred)
 
@@ -230,6 +250,20 @@ class SpotAsocPredictParser(PredictParser):
 
     def get_record_list(self, sel_tree, text=None):
         """ Convert single sel expression to extraction records
+
+        "<extra_id_0>
+            <extra_id_0> location <extra_id_5> JAPAN <extra_id_1>
+            <extra_id_0> person <extra_id_5> CHINA <extra_id_1>
+        <extra_id_1>"
+        ----->
+        ([('location', 'JAPAN'), ('person', 'CHINA')],
+         [],
+         [{'asocs': [], 'type': 'location', 'spot': 'JAPAN'},
+          {'asocs': [], 'type': 'person', 'spot': 'CHINA'}])
+        from: https://www.kaggle.com/vanle73/gpt-nexo-tokenizer/edit
+
+
+
         Args:
             sel_tree (Tree): sel tree
             text (str, optional): _description_. Defaults to None.

@@ -22,6 +22,21 @@ def print_tree(tree):
 
 
 def get_label_name_tree(label_name_list, tokenizer, end_symbol='<end>'):
+    '''
+    构造如下的树结构：
+    label_name_list： ["organization", "miscellaneous", "person", "location"]
+    label_tree： {'organization': [25590], 'miscellaneous': [43671, 43295], 'person': [10816], 'location': [12428]}
+
+    sub_token_tree： {25590: {'<end>': None},
+     43671: {43295: {'<end>': None}},
+     10816: {'<end>': None},
+     12428: {'<end>': None}}
+
+    :param label_name_list:
+    :param tokenizer:
+    :param end_symbol:
+    :return:
+    '''
     sub_token_tree = dict()
 
     label_tree = dict()

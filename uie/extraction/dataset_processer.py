@@ -53,12 +53,12 @@ class PrefixGenerator:
     def get_schema_prefix(schema: RecordSchema, add_split=True):
         prefix_list = list()
         for spot_label in sorted(schema.type_list):
-            prefix_list += [spot_prompt, spot_label]
+            prefix_list += [spot_prompt, spot_label]# '<spot>' + spot_label
         for asoc_label in sorted(schema.role_list):
-            prefix_list += [asoc_prompt, asoc_label]
-        prefix = ' '.join(prefix_list)
+            prefix_list += [asoc_prompt, asoc_label]# '<asoc>' + asoc_label
+        prefix = ' '.join(prefix_list)#
         if add_split:
-            return prefix + f' {text_start} '
+            return prefix + f' {text_start} ' # '<extra_id_2>'
         else:
             return prefix
 

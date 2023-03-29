@@ -261,7 +261,7 @@ def main():
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
-        # Setup the tokenizer for targets
+        # Setup the tokenizer for targets ，max_target_length=default 192
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length, padding=padding, truncation=True)
 
@@ -388,6 +388,7 @@ def main():
         )
 
     def compute_metrics(eval_preds):
+        # preds 可以理解为是model.generate输出的token_id
         preds, labels = eval_preds
         if isinstance(preds, tuple):
             preds = preds[0]

@@ -8,13 +8,36 @@ from universal_ie.ie_format import Entity, Event, Label, Relation, Span
 
 
 def convert_spot_asoc(spot_asoc_instance, structure_maker):
+    '''structure_maker---->BaseStructureMarker
+
+    self.sent_start = '<extra_id_0>'
+        self.sent_end = '<extra_id_1>'
+        self.record_start = '<extra_id_0>'
+        self.record_end = '<extra_id_1>'
+        self.span_start = '<extra_id_0>'
+        self.span_end = '<extra_id_1>'
+        self.sep_marker = '<extra_id_2>'
+        self.source_span_start = '<extra_id_3>'
+        self.source_span_end = '<extra_id_4>'
+        self.target_span_start = '<extra_id_5>'
+    '''
+
     spot_instance_str_rep_list = list()
     for spot in spot_asoc_instance:
+        '''
+        spot:
+            {'span': spot_dict[spot_key].span.text,
+                             'label': label,
+                             'asoc': list(),
+                             }
+        
+        '''
         spot_str_rep = [
             spot['label'],
             structure_maker.target_span_start,
             spot['span'],
-        ]
+        ]#ex: Peop <extra_id_5> Marie Magdefrau
+
         for asoc_label, asoc_span in spot.get('asoc', list()):
             asoc_str_rep = [
                 structure_maker.span_start,
@@ -22,8 +45,9 @@ def convert_spot_asoc(spot_asoc_instance, structure_maker):
                 structure_maker.target_span_start,
                 asoc_span,
                 structure_maker.span_end,
-            ]
+            ]# ex:  <extra_id_0> Live_In  <extra_id_5> Bethany  <extra_id_1>
             spot_str_rep += [' '.join(asoc_str_rep)]
+        # example:<extra_id_0> Peop <extra_id_5> Marie Magdefrau  <extra_id_0> Live_In  <extra_id_5> Bethany  <extra_id_1><extra_id_1>
         spot_instance_str_rep_list += [' '.join([
             structure_maker.record_start,
             ' '.join(spot_str_rep),
@@ -217,8 +241,8 @@ class Text2SpotAsoc(GenerationFormat):
             add_spot(spot=entity)
 
         for relation in relations:
-            add_spot(spot=relation.arg1)
-            add_asoc(spot=relation.arg1, asoc=relation.label, tail=relation.arg2)
+            add_spot(spot=relation.arg1)# relation.arg1---->head
+            add_asoc(spot=relation.arg1, asoc=relation.label, tail=relation.arg2)#asoc----type(text_str), relation.arg2----->tail
 
         for event in events:
             add_spot(spot=event)
@@ -227,7 +251,7 @@ class Text2SpotAsoc(GenerationFormat):
 
         spot_asoc_instance = list()
         for spot_key in sorted(spot_dict.keys()):
-            offset, label = spot_key
+            offset, label = spot_key # offset---[1,3], label---str_text
 
             if spot_dict[spot_key].span.is_empty_span():
                 continue

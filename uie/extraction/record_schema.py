@@ -22,9 +22,17 @@ class RecordSchema:
 
     @staticmethod
     def read_from_file(filename):
+        '''
+        ["organization", "miscellaneous", "person", "location"]
+        []
+        {"organization": [], "miscellaneous": [], "person": [], "location": []}
+
+        :param filename:
+        :return:
+        '''
         lines = open(filename).readlines()
-        type_list = json.loads(lines[0])
-        role_list = json.loads(lines[1])
+        type_list = json.loads(lines[0])# ["organization", "miscellaneous", "person", "location"]
+        role_list = json.loads(lines[1])#
         type_role_dict = json.loads(lines[2])
         return RecordSchema(type_list, role_list, type_role_dict)
 

@@ -19,6 +19,7 @@ class Dataset:
 
     def load_dataset(self):
         datasets = {}
+        # 训练集/验证集/测试集 路径
         for split_name, filename in self.split_dict.items():
             datasets[split_name] = self.data_class.load_from_file(
                 filename=os.path.join(self.path, filename),
@@ -41,7 +42,7 @@ class Dataset:
         return Dataset(
             name=dataset_config['name'],  # 数据集名字 Name of Dataset
             path=dataset_config['path'],  # 数据集路径 Path of Dataset
-            data_class=getattr(task_format, dataset_config['data_class']),  # 数据集对应的 Task Format 名字 Raw data loader
+            data_class=getattr(task_format, dataset_config['data_class']),# relation--coll04的是Spannet---Spannet(TaskFormat)  # 数据集对应的 Task Format 名字 Raw data loader
             split_dict=dataset_config['split'],   # 数据集不同划分文件地址 Data Split Path
             language=dataset_config['language'],  # 数据集语言 Dataset Language
             mapper=mapper,

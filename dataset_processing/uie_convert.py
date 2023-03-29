@@ -34,6 +34,7 @@ def convert_graph(
         "relation": list(),
         "event": list(),
     }
+    # datasets={'train':[ sample1, sample2, ...], 'dev':...}
     for data_type, instance_list in datasets.items():
         with open(os.path.join(output_folder, f"{data_type}.json"), "w") as output:
             for instance in tqdm(instance_list):
@@ -174,9 +175,9 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-format", dest="generation_format", default="spotasoc")
-    parser.add_argument("-config", dest="config", default="data_config/relation")
-    parser.add_argument("-output", dest="output", default="relation")
+    parser.add_argument("-format", dest="generation_format", default="spotasoc")# spotasoc
+    parser.add_argument("-config", dest="config", default="data_config/relation")# data_config/relation
+    parser.add_argument("-output", dest="output", default="relation")# relation
     options = parser.parse_args()
 
     generation_class = generation_format_dict.get(options.generation_format)
@@ -188,7 +189,8 @@ def main():
             os.path.join(options.config, x) for x in os.listdir(options.config)
         ]
 
-    for filename in config_list:
+    for filename in config_list :
+        if  "conll" not in filename: continue# 新加
         dataset = Dataset.load_yaml_file(filename)
 
         datasets = dataset.load_dataset()
@@ -203,10 +205,10 @@ def main():
         if generation_class:
             convert_graph(
                 generation_class,
-                output_name,
+                output_name,# converted_data/text2spotasoc/entity or relation
                 datasets=datasets,
-                language=dataset.language,
-                label_mapper=label_mapper,
+                language=dataset.language,# en
+                label_mapper=label_mapper,# label映射字典
             )
         elif options.generation_format == "oneie":
             convert_to_oneie(output_name, datasets=datasets)

@@ -184,7 +184,7 @@ def main():
         content_filename = f"{content_folder}/{doc_id}.text"
         corenlp_filename = f"{corenlp_folder}/{doc_id}.text.json"
 
-        if not os.path.exists(annotation_filename):
+        if not os.path.exists(annotation_filename) or not os.path.exists(content_filename):
             continue
 
         content = open(content_filename).read()

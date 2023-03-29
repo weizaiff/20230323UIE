@@ -256,8 +256,8 @@ class SpotConstraintDecoder(SpotAsocConstraintDecoder):
     def get_state_valid_tokens(self, src_sentence, tgt_generated):
         """
 
-        :param src_sentence:
-        :param tgt_generated:
+        :param src_sentence: 原始句子的token_id
+        :param tgt_generated: beam_search时/正常解码时，已经生成的token_id
         :return:
             List[str], valid token list
         """
@@ -283,13 +283,13 @@ class SpotConstraintDecoder(SpotAsocConstraintDecoder):
         elif state == 'start_first_generation':
             valid_tokens = [self.type_start, self.type_end]
 
-        elif state == 'generate_span':
+        elif state == 'generate_span':# start_number == end_number + 2 && last_special_token ！= self.span_start:
 
             if tgt_generated[-1] == self.type_start:
                 # Start Event Label
-                return list(self.type_tree.keys())
+                return list(self.type_tree.keys()) # 一定是事件的label， 实体的识别不会有数量差别为2的情况
 
-            elif tgt_generated[-1] == self.type_end:
+            elif tgt_generated[-1] == self.type_end:# 不可能有这种情况
                 raise RuntimeError('Invalid %s in %s' % (self.type_end, tgt_generated))
 
             else:
@@ -299,7 +299,7 @@ class SpotConstraintDecoder(SpotAsocConstraintDecoder):
                     end_search_tokens=[self.span_start]
                 )
 
-        elif state == 'generate_span_text':
+        elif state == 'generate_span_text':# # start_number == end_number + 2 && last_special_token == self.span_start:
             generated = tgt_generated[index + 1:]
             valid_tokens = generated_search_src_sequence(
                 generated=generated,

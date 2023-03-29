@@ -7,7 +7,7 @@ from uie.seq2seq.constraint_decoder.spotasoc_constraint_decoder import (
 
 
 def get_constraint_decoder(tokenizer, type_schema, decoding_schema, task_name='event', source_prefix=None):
-    if decoding_schema == 'spotasoc':
+    if decoding_schema == 'spotasoc':# 默认走这条
         if len(type_schema.role_list) == 0:
             task_map = {
                 'entity': SpotConstraintDecoder,

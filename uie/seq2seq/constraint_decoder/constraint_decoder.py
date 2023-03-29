@@ -21,7 +21,13 @@ def match_sublist(the_list, to_match):
             matched_list += [(index, index + len_to_match - 1)]
     return matched_list
 
+'''
+获取
+type_start = '<extra_id_0>'
+type_end = '<extra_id_1>'
+这两种token在生成文本中的数量
 
+'''
 def find_bracket_position(generated_text, _type_start, _type_end):
     bracket_position = {_type_start: list(), _type_end: list()}
     for index, char in enumerate(generated_text):
