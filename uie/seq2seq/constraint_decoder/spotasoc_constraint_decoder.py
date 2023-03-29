@@ -37,25 +37,39 @@ class SpotAsocConstraintDecoder(ConstraintDecoder):
             return 'start', -1
 
         # special_token_set = {EVENT_TYPE_LEFT, EVENT_TYPE_RIGHT}
+        '''
+        type_start = '<extra_id_0>'
+        type_end = '<extra_id_1>'
+        text_start = '<extra_id_2>'
+        span_start = '<extra_id_5>'
+        null_span = '<extra_id_6>'
+        null_label = '<extra_id_7>'
+        '''
         special_token_set = {self.type_start, self.type_end, self.span_start}
         special_index_token = list(filter(lambda x: x[1] in special_token_set, list(enumerate(tgt_generated))))
-
+        # 最后一个special token的index
         last_special_index, last_special_token = special_index_token[-1]
 
         if len(special_index_token) == 1:
-            if last_special_token != self.type_start:
+            if last_special_token != self.type_start:#第一个special token不等于<extra_id_0> 报错
                 return 'error', 0
+        '''
+        获取
+        type_start = '<extra_id_0>'
+        type_end = '<extra_id_1>'
+        这两种token在生成文本中的数量
 
+        '''
         bracket_position = find_bracket_position(tgt_generated, _type_start=self.type_start, _type_end=self.type_end)
         start_number, end_number = len(bracket_position[self.type_start]), len(bracket_position[self.type_end])
 
-        if start_number == end_number:
+        if start_number == end_number:#'<extra_id_0>'和 '<extra_id_1>' 生成的数量相等
             return 'end_generate', -1
-        if start_number == end_number + 1:
+        if start_number == end_number + 1:#'<extra_id_0>'比 '<extra_id_1>'的数量多一个
             state = 'start_first_generation'
-        elif start_number == end_number + 2:
+        elif start_number == end_number + 2:##'<extra_id_0>'比 '<extra_id_1>'的数量多2个
             state = 'generate_trigger'
-            if last_special_token == self.span_start:
+            if last_special_token == self.span_start:# 最后一个special token是<extra_id_5>
                 state = 'generate_trigger_text'
         elif start_number == end_number + 3:
             state = 'generate_role'
@@ -105,6 +119,7 @@ class SpotAsocConstraintDecoder(ConstraintDecoder):
 
     def get_state_valid_tokens(self, src_sentence, tgt_generated):
         """
+        限制当前step token_id的范围，具体怎么操作TBD。。。。
 
         :param src_sentence:
         :param tgt_generated:
@@ -121,13 +136,13 @@ class SpotAsocConstraintDecoder(ConstraintDecoder):
 
         print("State: %s" % state) if debug else None
 
-        if state == 'error':
+        if state == 'error':#第一个special token不等于<extra_id_0> 报错
             print("Decode Error:")
             print("Src:", self.tokenizer.convert_ids_to_tokens(src_sentence))
             print("Tgt:", self.tokenizer.convert_ids_to_tokens(tgt_generated))
             valid_tokens = [self.tokenizer.eos_token_id]
 
-        elif state == 'start':
+        elif state == 'start':# tgt_generated最后一个生成的token等于pad_token
             valid_tokens = [self.type_start]
 
         elif state == 'start_first_generation':
@@ -187,7 +202,7 @@ class SpotAsocConstraintDecoder(ConstraintDecoder):
                 end_search_tokens=[self.span_start]
             )
 
-        elif state == 'end_generate':
+        elif state == 'end_generate':#'<extra_id_0>'和 '<extra_id_1>' 生成的数量相等
             valid_tokens = [self.tokenizer.eos_token_id]
 
         else:

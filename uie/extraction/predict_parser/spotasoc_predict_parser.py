@@ -123,7 +123,7 @@ def get_tree_str(tree):
     """get str from sel tree
     """
     str_list = list()
-    for element in tree:
+    for element in tree:# tree---->organization <extra_id_5> Hakawati Theatre
         if isinstance(element, str):
             str_list += [element]
     return ' '.join(str_list)
@@ -197,6 +197,7 @@ class SpotAsocPredictParser(PredictParser):
             pred = clean_text(pred)
 
             try:
+                # return classnltk.Tree(node, children=None) ref: https://tedboy.github.io/nlps/generated/generated/nltk.Tree.html#nltk.Tree
                 gold_tree = ParentedTree.fromstring(gold, brackets=brackets)
             except ValueError:
                 logger.warning(f"Ill gold: {gold}")
@@ -262,6 +263,23 @@ class SpotAsocPredictParser(PredictParser):
           {'asocs': [], 'type': 'person', 'spot': 'CHINA'}])
         from: https://www.kaggle.com/vanle73/gpt-nexo-tokenizer/edit
 
+        example2:
+            "<extra_id_0>
+                <extra_id_0>  organization  <extra_id_5>  Xinhua News Agency  <extra_id_1>
+                <extra_id_0>  geographical social political  <extra_id_5>  Urumchi  <extra_id_1>
+                <extra_id_0>  person  <extra_id_5>  reporters  <extra_id_1>
+                <extra_id_0>  person  <extra_id_5>  Shengjiang Li  <extra_id_1>
+                <extra_id_0>  person  <extra_id_5>  Jian ' gang Ding  <extra_id_1>
+            <extra_id_1> "
+        example3:---relation
+            '<extra_id_0>
+                <extra_id_0> organization <extra_id_5> Hakawati Theatre
+                <extra_id_0> organization in <extra_id_5> Jerusalem <extra_id_1>
+                <extra_id_1>
+                <extra_id_0> other <extra_id_5> Arab <extra_id_1>
+                <extra_id_0> location <extra_id_5> Jerusalem <extra_id_1>
+                <extra_id_0> other <extra_id_5> Palestinians <extra_id_1>
+            <extra_id_1>'
 
 
         Args:
@@ -283,7 +301,7 @@ class SpotAsocPredictParser(PredictParser):
             if isinstance(spot_tree, str) or len(spot_tree) == 0:
                 continue
 
-            spot_type = spot_tree.label()
+            spot_type = spot_tree.label()# spot_tree: example 3- --->subtree_0:organization <extra_id_5> Hakawati Theatre
             spot_text = get_tree_str(spot_tree)
             spot_type, spot_text = resplit_label_span(
                 spot_type, spot_text)

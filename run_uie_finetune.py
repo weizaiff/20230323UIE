@@ -140,7 +140,7 @@ def main():
             data_files["test"] = data_args.test_file
             extension = data_args.test_file.split(".")[-1]
     logger.info(data_files)
-    # TODO 根据已有的脚本read 数据
+    # TODO 根据已有的脚本read 数据,暂时不知道为什么要这么做
     datasets = load_dataset("uie_json.py", data_files=data_files)
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
@@ -256,8 +256,8 @@ def main():
         )
 
     def preprocess_function(examples):
-        inputs = examples[text_column]
-        targets = examples[record_column]
+        inputs = examples[text_column]# dict_key： text
+        targets = examples[record_column]# dict_key: record
         inputs = [prefix + inp for inp in inputs]
         model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 

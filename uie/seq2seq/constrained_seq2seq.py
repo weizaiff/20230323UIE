@@ -169,6 +169,8 @@ class ConstraintSeq2SeqTrainer(Seq2SeqTrainer):
 
         def prefix_allowed_tokens_fn(batch_id, sent):
             # print(self.tokenizer.convert_ids_to_tokens(inputs['labels'][batch_id]))
+
+            # sent---->之前step生成的input_Id（1，seq_len）
             src_sentence = inputs['input_ids'][batch_id]
             # 实际调用 get_state_valid_tokens
             return self.constraint_decoder.constraint_decoding(src_sentence=src_sentence,
